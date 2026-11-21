@@ -66,7 +66,7 @@ internal static class BotCommandRules
 
     private static bool IsArgumentName(string name)
     {
-        if (name.Length == 0 || name.Length > BotLimits.MaxCommandArgumentNameLength)
+        if (name.Length is 0 or > BotLimits.MaxCommandArgumentNameLength)
             return false;
         if (!IsLetter(name[0]))
             return false;
@@ -93,7 +93,7 @@ internal static class BotCommandRules
 
         foreach (var ch in value)
         {
-            if (ch < (char)0x20 || ch == (char)0x7F || ch == '<' || ch == '>')
+            if (ch is < (char)0x20 or (char)0x7F or '<' or '>')
                 return false;
         }
 

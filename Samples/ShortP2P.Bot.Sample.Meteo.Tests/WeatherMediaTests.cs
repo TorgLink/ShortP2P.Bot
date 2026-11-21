@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Globalization;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Text.Json;
 using Concentus;
@@ -7,6 +8,7 @@ using Concentus.Oggfile;
 using NAudio.Wave;
 using ShortP2P.Bot.Contracts;
 using ShortP2P.Bot.Sample.Echo;
+using ShortP2P.Bot.Wire;
 using ShortP2P.Bot.Sample.Meteo.Commands;
 using ShortP2P.Bot.Sample.Meteo.Media;
 
@@ -204,6 +206,7 @@ public sealed class WeatherMediaTests
     }
 
     [Fact]
+    [SupportedOSPlatform("windows")]
     public async Task Voice_RussianUsesInstalledRhVoiceWhenPresent()
     {
         using var synth = new System.Speech.Synthesis.SpeechSynthesizer();

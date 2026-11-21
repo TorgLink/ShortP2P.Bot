@@ -21,9 +21,7 @@ internal static class BotCommandArgumentParser
 
             var type = args[i].ArgType;
             var takesRemainder = i == args.Count - 1
-                && (type == BotCommandArgumentTypes.String
-                    || type == BotCommandArgumentTypes.Dynamic
-                    || type == BotCommandArgumentTypes.DateTime);
+                && type is BotCommandArgumentTypes.String or BotCommandArgumentTypes.Dynamic or BotCommandArgumentTypes.DateTime;
 
             string token;
             if (takesRemainder)
