@@ -8,7 +8,7 @@ namespace ShortP2P.Bot.Sample.Meteo.Weather;
 /// Nominatim place search. The public instance allows at most one request per second,
 /// so calls on this client wait for that gap.
 /// </summary>
-public sealed class OpenStreetMapGeocoder : IPlaceGeocoder
+public sealed class OpenStreetMapGeocoder(HttpClient http) : IPlaceGeocoder
 {
     private static readonly JsonSerializerOptions Json = new()
     {
@@ -16,14 +16,9 @@ public sealed class OpenStreetMapGeocoder : IPlaceGeocoder
         PropertyNameCaseInsensitive = true
     };
 
-    private readonly HttpClient _http;
+    private readonly HttpClient _http = http ?? throw new ArgumentNullException(nameof(http));
     private readonly SemaphoreSlim _gate = new(1, 1);
     private DateTime _nextUtc = DateTime.MinValue;
-
-    public OpenStreetMapGeocoder(HttpClient http)
-    {
-        _http = http ?? throw new ArgumentNullException(nameof(http));
-    }
 
     public async Task<GeoHit?> SearchAsync(string name, string language, CancellationToken cancellationToken)
     {

@@ -7,14 +7,9 @@ using ShortP2P.Bot.Http;
 
 namespace Botticelli.Framework.ShortP2P.Messaging;
 
-internal sealed class ShortP2PAttachmentSender
+internal sealed class ShortP2PAttachmentSender(IMessengerServerApiClient api)
 {
-    private readonly IMessengerServerApiClient _api;
-
-    public ShortP2PAttachmentSender(IMessengerServerApiClient api)
-    {
-        _api = api ?? throw new ArgumentNullException(nameof(api));
-    }
+    private readonly IMessengerServerApiClient _api = api ?? throw new ArgumentNullException(nameof(api));
 
     public async Task<BotClientMessageDto> UploadAsync(
         Uri serverBaseUrl,
@@ -55,7 +50,7 @@ internal sealed class ShortP2PAttachmentSender
                 cancellationToken).ConfigureAwait(false);
         }
 
-        var expires = DateTime.UtcNow.AddHours(24).Ticks;
+        var expires = DateTime.UtcNow.AddDays(1).Ticks;
         var offer = ChatWireCodec.EncodeTransferOffer(new ChatWireTransferOffer(
             blobId,
             sha,

@@ -3,14 +3,9 @@ using ShortP2P.Bot.Contracts.Dtos;
 namespace ShortP2P.Bot.Commands;
 
 /// <summary>Returns the bot network id and the commands from <c>bot_commands</c>.</summary>
-public sealed class GetBotCommands
+public sealed class GetBotCommands(BotCommandCatalog catalog)
 {
-    private readonly BotCommandCatalog _catalog;
-
-    public GetBotCommands(BotCommandCatalog catalog)
-    {
-        _catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
-    }
+    private readonly BotCommandCatalog _catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
 
     public BotCommandsDto Execute(GetBotCommandsQuery query)
     {

@@ -8,7 +8,7 @@ namespace ShortP2P.Bot.Commands;
 /// <summary>
 /// Loads <c>bot_commands</c> (JSON array of command, args, description) and checks incoming text against it.
 /// </summary>
-public sealed class BotCommandCatalog
+public sealed class BotCommandCatalog(IOptions<BotHostOptions> options)
 {
     public const string DefaultFileName = "bot_commands";
 
@@ -18,14 +18,9 @@ public sealed class BotCommandCatalog
         PropertyNameCaseInsensitive = true
     };
 
-    private readonly BotHostOptions _options;
+    private readonly BotHostOptions _options = options?.Value ?? new BotHostOptions();
     private readonly object _gate = new object();
     private IReadOnlyList<BotCommandDto>? _commands;
-
-    public BotCommandCatalog(IOptions<BotHostOptions> options)
-    {
-        _options = options?.Value ?? new BotHostOptions();
-    }
 
     public IReadOnlyList<BotCommandDto> Commands
     {

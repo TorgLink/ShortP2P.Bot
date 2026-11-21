@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace ShortP2P.Bot.Sample.Meteo.Weather;
 
-public sealed class BrightSkyClient : ICurrentWeatherSource
+public sealed class BrightSkyClient(HttpClient http) : ICurrentWeatherSource
 {
     private static readonly JsonSerializerOptions Json = new()
     {
@@ -14,12 +14,7 @@ public sealed class BrightSkyClient : ICurrentWeatherSource
         PropertyNameCaseInsensitive = true
     };
 
-    private readonly HttpClient _http;
-
-    public BrightSkyClient(HttpClient http)
-    {
-        _http = http ?? throw new ArgumentNullException(nameof(http));
-    }
+    private readonly HttpClient _http = http ?? throw new ArgumentNullException(nameof(http));
 
     public async Task<ForecastHit> CurrentAsync(double latitude, double longitude, CancellationToken cancellationToken)
     {

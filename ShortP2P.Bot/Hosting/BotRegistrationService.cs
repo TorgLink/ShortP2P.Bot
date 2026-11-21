@@ -13,42 +13,30 @@ namespace ShortP2P.Bot.Hosting;
 /// Publishes the bot on the messenger server before polling starts.
 /// The command list comes from <see cref="GetBotCommands"/> and <c>bot_commands</c>.
 /// </summary>
-public sealed class BotRegistrationService : IHostedService
+public sealed class BotRegistrationService(
+    IBotMessenger messenger,
+    IMessengerServerRepository servers,
+    IBotCertificateProvider certificates,
+    IMessageKeyStore messageKeys,
+    IMessageKeyFactory keyFactory,
+    MessageKeyHolder keys,
+    GetBotCommands botCommands,
+    IOptions<BotRegistrationOptions> options,
+    ILogger<BotRegistrationService> logger)
+    : IHostedService
 {
     private static readonly TimeSpan RetryDelay = TimeSpan.FromSeconds(5);
 
-    private readonly IBotMessenger _messenger;
-    private readonly IMessengerServerRepository _servers;
-    private readonly IBotCertificateProvider _certificates;
-    private readonly IMessageKeyStore _messageKeys;
-    private readonly IMessageKeyFactory _keyFactory;
-    private readonly MessageKeyHolder _keys;
-    private readonly GetBotCommands _botCommands;
-    private readonly BotRegistrationOptions _options;
-    private readonly ILogger<BotRegistrationService> _logger;
+    private readonly IBotMessenger _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
+    private readonly IMessengerServerRepository _servers = servers ?? throw new ArgumentNullException(nameof(servers));
+    private readonly IBotCertificateProvider _certificates = certificates ?? throw new ArgumentNullException(nameof(certificates));
+    private readonly IMessageKeyStore _messageKeys = messageKeys ?? throw new ArgumentNullException(nameof(messageKeys));
+    private readonly IMessageKeyFactory _keyFactory = keyFactory ?? throw new ArgumentNullException(nameof(keyFactory));
+    private readonly MessageKeyHolder _keys = keys ?? throw new ArgumentNullException(nameof(keys));
+    private readonly GetBotCommands _botCommands = botCommands ?? throw new ArgumentNullException(nameof(botCommands));
+    private readonly BotRegistrationOptions _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+    private readonly ILogger<BotRegistrationService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     private CancellationTokenSource? _stop;
-
-    public BotRegistrationService(
-        IBotMessenger messenger,
-        IMessengerServerRepository servers,
-        IBotCertificateProvider certificates,
-        IMessageKeyStore messageKeys,
-        IMessageKeyFactory keyFactory,
-        MessageKeyHolder keys,
-        GetBotCommands botCommands,
-        IOptions<BotRegistrationOptions> options,
-        ILogger<BotRegistrationService> logger)
-    {
-        _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
-        _servers = servers ?? throw new ArgumentNullException(nameof(servers));
-        _certificates = certificates ?? throw new ArgumentNullException(nameof(certificates));
-        _messageKeys = messageKeys ?? throw new ArgumentNullException(nameof(messageKeys));
-        _keyFactory = keyFactory ?? throw new ArgumentNullException(nameof(keyFactory));
-        _keys = keys ?? throw new ArgumentNullException(nameof(keys));
-        _botCommands = botCommands ?? throw new ArgumentNullException(nameof(botCommands));
-        _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {

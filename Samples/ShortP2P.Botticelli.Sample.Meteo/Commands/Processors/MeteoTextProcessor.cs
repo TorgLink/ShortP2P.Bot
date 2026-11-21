@@ -10,15 +10,10 @@ namespace ShortP2P.Samples.Botticelli.Meteo.Commands.Processors;
 /// Answers text that is not a command. <c>/start</c>, <c>/stop</c>, <c>/lang</c> and <c>/weather</c>
 /// are handled by their own command processors.
 /// </summary>
-internal sealed class MeteoTextProcessor : ICommandProcessor
+internal sealed class MeteoTextProcessor(MeteoReply reply) : ICommandProcessor
 {
-    private readonly MeteoReply _reply;
+    private readonly MeteoReply _reply = reply ?? throw new ArgumentNullException(nameof(reply));
     private IBot? _bot;
-
-    public MeteoTextProcessor(MeteoReply reply)
-    {
-        _reply = reply ?? throw new ArgumentNullException(nameof(reply));
-    }
 
     public void SetBot(IBot bot) => _bot = bot;
 

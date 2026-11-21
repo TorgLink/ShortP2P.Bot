@@ -1,13 +1,8 @@
 namespace ShortP2P.Bot.Sample.Storage;
 
-public sealed class SqliteRequestLog : IRequestLog
+public sealed class SqliteRequestLog(SampleBotDatabase database) : IRequestLog
 {
-    private readonly SampleBotDatabase _database;
-
-    public SqliteRequestLog(SampleBotDatabase database)
-    {
-        _database = database ?? throw new ArgumentNullException(nameof(database));
-    }
+    private readonly SampleBotDatabase _database = database ?? throw new ArgumentNullException(nameof(database));
 
     public Task AddAsync(IncomingRequest request, CancellationToken cancellationToken = default)
     {

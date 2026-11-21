@@ -25,14 +25,9 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private sealed class ShortP2PBotHostedService : IHostedService
+    private sealed class ShortP2PBotHostedService(ShortP2PBot bot) : IHostedService
     {
-        private readonly ShortP2PBot _bot;
-
-        public ShortP2PBotHostedService(ShortP2PBot bot)
-        {
-            _bot = bot ?? throw new ArgumentNullException(nameof(bot));
-        }
+        private readonly ShortP2PBot _bot = bot ?? throw new ArgumentNullException(nameof(bot));
 
         public Task StartAsync(CancellationToken cancellationToken) =>
             _bot.StartBotAsync(StartBotRequest.GetInstance(), cancellationToken);

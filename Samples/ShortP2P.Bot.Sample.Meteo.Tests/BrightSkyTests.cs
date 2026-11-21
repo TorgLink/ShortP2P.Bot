@@ -120,25 +120,16 @@ public sealed class BrightSkyTests
         Assert.Contains("no DWD station", error.Message);
     }
 
-    private sealed class StubHandler : HttpMessageHandler
+    private sealed class StubHandler(HttpStatusCode status, string body) : HttpMessageHandler
     {
-        private readonly HttpStatusCode _status;
-        private readonly string _body;
-
-        public StubHandler(HttpStatusCode status, string body)
-        {
-            _status = status;
-            _body = body;
-        }
-
         public Uri? RequestUri { get; private set; }
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             RequestUri = request.RequestUri;
-            return Task.FromResult(new HttpResponseMessage(_status)
+            return Task.FromResult(new HttpResponseMessage(status)
             {
-                Content = new StringContent(_body, Encoding.UTF8, "application/json")
+                Content = new StringContent(body, Encoding.UTF8, "application/json")
             });
         }
     }

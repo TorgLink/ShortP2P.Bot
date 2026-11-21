@@ -3,18 +3,14 @@ using ShortP2P.Bot.Sample.Meteo.Weather;
 
 namespace ShortP2P.Bot.Sample.Meteo.Commands;
 
-public sealed class MeteoCommandHandler
+public sealed class MeteoCommandHandler(
+    SqliteChatStore chats,
+    WeatherService weather,
+    ILogger<MeteoCommandHandler> logger)
 {
-    private readonly SqliteChatStore _chats;
-    private readonly WeatherService _weather;
-    private readonly ILogger<MeteoCommandHandler> _logger;
-
-    public MeteoCommandHandler(SqliteChatStore chats, WeatherService weather, ILogger<MeteoCommandHandler> logger)
-    {
-        _chats = chats ?? throw new ArgumentNullException(nameof(chats));
-        _weather = weather ?? throw new ArgumentNullException(nameof(weather));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly SqliteChatStore _chats = chats ?? throw new ArgumentNullException(nameof(chats));
+    private readonly WeatherService _weather = weather ?? throw new ArgumentNullException(nameof(weather));
+    private readonly ILogger<MeteoCommandHandler> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public async Task<CommandResult> HandleAsync(string clientNetworkId, string text, CancellationToken cancellationToken)
     {

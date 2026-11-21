@@ -8,39 +8,28 @@ using ShortP2P.Bot.Sample.Storage;
 
 namespace ShortP2P.Bot.Sample.Echo;
 
-internal sealed class EchoBotService : BackgroundService
+internal sealed class EchoBotService(
+    IBotMessenger messenger,
+    IMessengerServerRepository servers,
+    IRequestLog requests,
+    IBotCertificateStore certificates,
+    SqliteMessageKeyStore messageKeys,
+    IOptions<SampleBotOptions> options,
+    GetBotCommands botCommands,
+    ILogger<EchoBotService> logger)
+    : BackgroundService
 {
     private static readonly TimeSpan RetryDelay = TimeSpan.FromSeconds(5);
 
-    private readonly IBotMessenger _messenger;
-    private readonly IMessengerServerRepository _servers;
-    private readonly IRequestLog _requests;
-    private readonly IBotCertificateStore _certificates;
-    private readonly SqliteMessageKeyStore _messageKeys;
-    private readonly SampleBotOptions _options;
-    private readonly GetBotCommands _botCommands;
-    private readonly ILogger<EchoBotService> _logger;
+    private readonly IBotMessenger _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
+    private readonly IMessengerServerRepository _servers = servers ?? throw new ArgumentNullException(nameof(servers));
+    private readonly IRequestLog _requests = requests ?? throw new ArgumentNullException(nameof(requests));
+    private readonly IBotCertificateStore _certificates = certificates ?? throw new ArgumentNullException(nameof(certificates));
+    private readonly SqliteMessageKeyStore _messageKeys = messageKeys ?? throw new ArgumentNullException(nameof(messageKeys));
+    private readonly SampleBotOptions _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+    private readonly GetBotCommands _botCommands = botCommands ?? throw new ArgumentNullException(nameof(botCommands));
+    private readonly ILogger<EchoBotService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     private string _privateKeyJson = "";
-
-    public EchoBotService(
-        IBotMessenger messenger,
-        IMessengerServerRepository servers,
-        IRequestLog requests,
-        IBotCertificateStore certificates,
-        SqliteMessageKeyStore messageKeys,
-        IOptions<SampleBotOptions> options,
-        GetBotCommands botCommands,
-        ILogger<EchoBotService> logger)
-    {
-        _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
-        _servers = servers ?? throw new ArgumentNullException(nameof(servers));
-        _requests = requests ?? throw new ArgumentNullException(nameof(requests));
-        _certificates = certificates ?? throw new ArgumentNullException(nameof(certificates));
-        _messageKeys = messageKeys ?? throw new ArgumentNullException(nameof(messageKeys));
-        _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
-        _botCommands = botCommands ?? throw new ArgumentNullException(nameof(botCommands));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

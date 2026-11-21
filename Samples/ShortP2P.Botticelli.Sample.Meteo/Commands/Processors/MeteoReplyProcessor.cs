@@ -7,20 +7,15 @@ using Microsoft.Extensions.Logging;
 
 namespace ShortP2P.Samples.Botticelli.Meteo.Commands.Processors;
 
-internal abstract class MeteoReplyProcessor<TCommand> : CommandProcessor<TCommand>
+internal abstract class MeteoReplyProcessor<TCommand>(
+    ILogger logger,
+    ICommandValidator<TCommand> commandValidator,
+    IValidator<Message> messageValidator,
+    MeteoReply reply)
+    : CommandProcessor<TCommand>(logger, commandValidator, messageValidator)
     where TCommand : class, ICommand
 {
-    private readonly MeteoReply _reply;
-
-    protected MeteoReplyProcessor(
-        ILogger logger,
-        ICommandValidator<TCommand> commandValidator,
-        IValidator<Message> messageValidator,
-        MeteoReply reply)
-        : base(logger, commandValidator, messageValidator)
-    {
-        _reply = reply ?? throw new ArgumentNullException(nameof(reply));
-    }
+    private readonly MeteoReply _reply = reply ?? throw new ArgumentNullException(nameof(reply));
 
     protected override async Task InnerProcess(Message message, CancellationToken token)
     {

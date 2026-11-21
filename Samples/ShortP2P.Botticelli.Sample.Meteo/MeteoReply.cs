@@ -9,21 +9,14 @@ namespace ShortP2P.Samples.Botticelli.Meteo;
 /// <summary>
 /// Builds the Botticelli message for a meteo reply. Picture and voice travel as attachments.
 /// </summary>
-internal sealed class MeteoReply
+internal sealed class MeteoReply(
+    MeteoCommandHandler handler,
+    IOptions<VoiceOptions> voice,
+    ILogger<MeteoReply> logger)
 {
-    private readonly MeteoCommandHandler _handler;
-    private readonly VoiceOptions _voice;
-    private readonly ILogger<MeteoReply> _logger;
-
-    public MeteoReply(
-        MeteoCommandHandler handler,
-        IOptions<VoiceOptions> voice,
-        ILogger<MeteoReply> logger)
-    {
-        _handler = handler ?? throw new ArgumentNullException(nameof(handler));
-        _voice = voice?.Value ?? throw new ArgumentNullException(nameof(voice));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly MeteoCommandHandler _handler = handler ?? throw new ArgumentNullException(nameof(handler));
+    private readonly VoiceOptions _voice = voice?.Value ?? throw new ArgumentNullException(nameof(voice));
+    private readonly ILogger<MeteoReply> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public async Task<Message> BuildAsync(Message incoming, CancellationToken cancellationToken)
     {

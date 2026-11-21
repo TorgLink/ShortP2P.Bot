@@ -30,36 +30,26 @@ namespace Botticelli.Framework.ShortP2P;
 /// Draft ShortP2P messenger for Botticelli. Sends and receives text, pictures, and sound.
 /// Button layouts are ignored. Any other generated message fails with <see cref="NotImplementedException"/>.
 /// </summary>
-public sealed class ShortP2PBot : BaseBot<ShortP2PBot>
+public sealed class ShortP2PBot(
+    ILogger<ShortP2PBot> logger,
+    IBotMessenger messenger,
+    IMessengerServerRepository servers,
+    IMessengerServerApiClient api,
+    IOptions<ShortP2PBotOptions> options,
+    IServiceProvider services,
+    GetBotCommands commands,
+    MetricsProcessor? metrics = null)
+    : BaseBot<ShortP2PBot>(logger, metrics)
 {
-    private readonly IBotMessenger _messenger;
-    private readonly IMessengerServerRepository _servers;
-    private readonly IOptions<ShortP2PBotOptions> _options;
-    private readonly IServiceProvider _services;
-    private readonly GetBotCommands _commands;
-    private readonly ShortP2PAttachmentSender _attachments;
+    private readonly IBotMessenger _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
+    private readonly IMessengerServerRepository _servers = servers ?? throw new ArgumentNullException(nameof(servers));
+    private readonly IOptions<ShortP2PBotOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
+    private readonly IServiceProvider _services = services ?? throw new ArgumentNullException(nameof(services));
+    private readonly GetBotCommands _commands = commands ?? throw new ArgumentNullException(nameof(commands));
+    private readonly ShortP2PAttachmentSender _attachments = new(api ?? throw new ArgumentNullException(nameof(api)));
     private readonly ConcurrentDictionary<string, string> _clientPublicKeys = new(StringComparer.Ordinal);
     private CancellationTokenSource? _run;
     private Task? _loop;
-
-    public ShortP2PBot(
-        ILogger<ShortP2PBot> logger,
-        IBotMessenger messenger,
-        IMessengerServerRepository servers,
-        IMessengerServerApiClient api,
-        IOptions<ShortP2PBotOptions> options,
-        IServiceProvider services,
-        GetBotCommands commands,
-        MetricsProcessor? metrics = null)
-        : base(logger, metrics)
-    {
-        _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
-        _servers = servers ?? throw new ArgumentNullException(nameof(servers));
-        _options = options ?? throw new ArgumentNullException(nameof(options));
-        _services = services ?? throw new ArgumentNullException(nameof(services));
-        _commands = commands ?? throw new ArgumentNullException(nameof(commands));
-        _attachments = new ShortP2PAttachmentSender(api ?? throw new ArgumentNullException(nameof(api)));
-    }
 
     /// <summary>
     /// <see cref="BotType"/> has no ShortP2P value in Botticelli 0.8.

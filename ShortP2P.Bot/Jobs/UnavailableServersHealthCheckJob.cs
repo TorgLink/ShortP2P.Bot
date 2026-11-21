@@ -10,33 +10,27 @@ namespace ShortP2P.Bot.Jobs;
 /// Periodically pings previously unavailable servers via GET /api/v1/health/ping
 /// and restores them to the available pool when the ping succeeds.
 /// </summary>
-public sealed class UnavailableServersHealthCheckJob : BackgroundService
+public sealed class UnavailableServersHealthCheckJob(
+    IServiceScopeFactory scopeFactory,
+    ILogger<UnavailableServersHealthCheckJob> logger,
+    TimeSpan interval)
+    : BackgroundService
 {
     public const int DefaultIntervalMinutes = 3;
 
     public static readonly TimeSpan DefaultInterval = TimeSpan.FromMinutes(DefaultIntervalMinutes);
 
-    private readonly IServiceScopeFactory _scopeFactory;
-    private readonly ILogger<UnavailableServersHealthCheckJob> _logger;
-    private readonly TimeSpan _interval;
+    private readonly IServiceScopeFactory _scopeFactory = scopeFactory ?? throw new ArgumentNullException(nameof(scopeFactory));
+    private readonly ILogger<UnavailableServersHealthCheckJob> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly TimeSpan _interval = interval <= TimeSpan.Zero
+        ? throw new ArgumentOutOfRangeException(nameof(interval))
+        : interval;
 
     public UnavailableServersHealthCheckJob(
         IServiceScopeFactory scopeFactory,
         ILogger<UnavailableServersHealthCheckJob> logger)
         : this(scopeFactory, logger, DefaultInterval)
     {
-    }
-
-    public UnavailableServersHealthCheckJob(
-        IServiceScopeFactory scopeFactory,
-        ILogger<UnavailableServersHealthCheckJob> logger,
-        TimeSpan interval)
-    {
-        _scopeFactory = scopeFactory ?? throw new ArgumentNullException(nameof(scopeFactory));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _interval = interval <= TimeSpan.Zero
-            ? throw new ArgumentOutOfRangeException(nameof(interval))
-            : interval;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

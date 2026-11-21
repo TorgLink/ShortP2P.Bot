@@ -4,14 +4,9 @@ using ShortP2P.Bot.Dal.Entities;
 
 namespace ShortP2P.Bot.Sample.Storage;
 
-public sealed class SqliteMessengerServerRepository : IMessengerServerRepository
+public sealed class SqliteMessengerServerRepository(SampleBotDatabase database) : IMessengerServerRepository
 {
-    private readonly SampleBotDatabase _database;
-
-    public SqliteMessengerServerRepository(SampleBotDatabase database)
-    {
-        _database = database ?? throw new ArgumentNullException(nameof(database));
-    }
+    private readonly SampleBotDatabase _database = database ?? throw new ArgumentNullException(nameof(database));
 
     public Task<MessengerServerEntity?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
     {

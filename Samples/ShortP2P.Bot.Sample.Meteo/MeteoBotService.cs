@@ -11,45 +11,32 @@ using ShortP2P.Bot.Sample.Storage;
 
 namespace ShortP2P.Bot.Sample.Meteo;
 
-internal sealed class MeteoBotService : BackgroundService
+internal sealed class MeteoBotService(
+    IBotMessenger messenger,
+    IMessengerServerRepository servers,
+    IBotCertificateStore certificates,
+    SqliteMessageKeyStore messageKeys,
+    MeteoCommandHandler commands,
+    GetBotCommands botCommands,
+    WeatherAttachmentSender attachments,
+    IOptions<SampleBotOptions> options,
+    IOptions<VoiceOptions> voice,
+    ILogger<MeteoBotService> logger)
+    : BackgroundService
 {
     private static readonly TimeSpan RetryDelay = TimeSpan.FromSeconds(5);
 
-    private readonly IBotMessenger _messenger;
-    private readonly IMessengerServerRepository _servers;
-    private readonly IBotCertificateStore _certificates;
-    private readonly SqliteMessageKeyStore _messageKeys;
-    private readonly MeteoCommandHandler _commands;
-    private readonly GetBotCommands _botCommands;
-    private readonly WeatherAttachmentSender _attachments;
-    private readonly SampleBotOptions _options;
-    private readonly VoiceOptions _voice;
-    private readonly ILogger<MeteoBotService> _logger;
+    private readonly IBotMessenger _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
+    private readonly IMessengerServerRepository _servers = servers ?? throw new ArgumentNullException(nameof(servers));
+    private readonly IBotCertificateStore _certificates = certificates ?? throw new ArgumentNullException(nameof(certificates));
+    private readonly SqliteMessageKeyStore _messageKeys = messageKeys ?? throw new ArgumentNullException(nameof(messageKeys));
+    private readonly MeteoCommandHandler _commands = commands ?? throw new ArgumentNullException(nameof(commands));
+    private readonly GetBotCommands _botCommands = botCommands ?? throw new ArgumentNullException(nameof(botCommands));
+    private readonly WeatherAttachmentSender _attachments = attachments ?? throw new ArgumentNullException(nameof(attachments));
+    private readonly SampleBotOptions _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+    private readonly VoiceOptions _voice = voice?.Value ?? throw new ArgumentNullException(nameof(voice));
+    private readonly ILogger<MeteoBotService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     private string _privateKeyJson = "";
-
-    public MeteoBotService(
-        IBotMessenger messenger,
-        IMessengerServerRepository servers,
-        IBotCertificateStore certificates,
-        SqliteMessageKeyStore messageKeys,
-        MeteoCommandHandler commands,
-        GetBotCommands botCommands,
-        WeatherAttachmentSender attachments,
-        IOptions<SampleBotOptions> options,
-        IOptions<VoiceOptions> voice,
-        ILogger<MeteoBotService> logger)
-    {
-        _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
-        _servers = servers ?? throw new ArgumentNullException(nameof(servers));
-        _certificates = certificates ?? throw new ArgumentNullException(nameof(certificates));
-        _messageKeys = messageKeys ?? throw new ArgumentNullException(nameof(messageKeys));
-        _commands = commands ?? throw new ArgumentNullException(nameof(commands));
-        _botCommands = botCommands ?? throw new ArgumentNullException(nameof(botCommands));
-        _attachments = attachments ?? throw new ArgumentNullException(nameof(attachments));
-        _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
-        _voice = voice?.Value ?? throw new ArgumentNullException(nameof(voice));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

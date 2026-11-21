@@ -35,9 +35,9 @@ public static class ShortP2PMessageSupport
 
         var attachments = message.Attachments ?? [];
         var hasBinary = false;
-        foreach (var attachment in attachments)
+        
+        foreach (var binaryAttachment in attachments.Select(attachment => attachment as BinaryBaseAttachment))
         {
-            var binaryAttachment = attachment as BinaryBaseAttachment;
             if (binaryAttachment is null)
                 Fail(logger, "attachment");
 
@@ -68,9 +68,8 @@ public static class ShortP2PMessageSupport
     {
         if (!string.IsNullOrWhiteSpace(message.Body))
             return message.Body;
-        if (!string.IsNullOrWhiteSpace(message.Subject))
-            return message.Subject;
-        return null;
+        
+        return !string.IsNullOrWhiteSpace(message.Subject) ? message.Subject : null;
     }
 
     public static IReadOnlyList<BinaryBaseAttachment> FilesToSend(Message message)

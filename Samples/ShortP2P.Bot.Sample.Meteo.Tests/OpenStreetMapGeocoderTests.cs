@@ -68,16 +68,10 @@ public sealed class OpenStreetMapGeocoderTests
         Assert.Contains("OpenStreetMapBaseUrl", error.Message);
     }
 
-    private sealed class StubHandler : HttpMessageHandler
+    private sealed class StubHandler(HttpStatusCode status, string body) : HttpMessageHandler
     {
-        private HttpStatusCode _status;
-        private string _body;
-
-        public StubHandler(HttpStatusCode status, string body)
-        {
-            _status = status;
-            _body = body;
-        }
+        private HttpStatusCode _status = status;
+        private string _body = body;
 
         public Uri? RequestUri { get; private set; }
 

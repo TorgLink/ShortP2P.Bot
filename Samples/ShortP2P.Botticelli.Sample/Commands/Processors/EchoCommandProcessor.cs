@@ -7,16 +7,12 @@ using Microsoft.Extensions.Logging;
 
 namespace ShortP2P.Samples.Botticelli.Commands.Processors;
 
-public class EchoCommandProcessor : CommandProcessor<EchoCommand>
+public class EchoCommandProcessor(
+    ILogger<EchoCommandProcessor> logger,
+    ICommandValidator<EchoCommand> commandValidator,
+    IValidator<Message> messageValidator)
+    : CommandProcessor<EchoCommand>(logger, commandValidator, messageValidator)
 {
-    public EchoCommandProcessor(
-        ILogger<EchoCommandProcessor> logger,
-        ICommandValidator<EchoCommand> commandValidator,
-        IValidator<Message> messageValidator)
-        : base(logger, commandValidator, messageValidator)
-    {
-    }
-
     protected override Task InnerProcess(Message message, CancellationToken token)
     {
         return SendMessage(new SendMessageRequest

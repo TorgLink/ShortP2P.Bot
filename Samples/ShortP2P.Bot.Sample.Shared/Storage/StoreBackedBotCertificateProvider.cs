@@ -9,20 +9,15 @@ namespace ShortP2P.Bot.Sample.Storage;
 /// Adapts the sample SQLite certificate store to the library <see cref="IBotCertificateProvider"/>.
 /// Keeps register/login fingerprints aligned with the cert used by the host.
 /// </summary>
-public sealed class StoreBackedBotCertificateProvider : IBotCertificateProvider
+public sealed class StoreBackedBotCertificateProvider(
+    IBotCertificateStore store,
+    IOptions<SampleBotOptions> options)
+    : IBotCertificateProvider
 {
-    private readonly IBotCertificateStore _store;
-    private readonly SampleBotOptions _options;
+    private readonly IBotCertificateStore _store = store ?? throw new ArgumentNullException(nameof(store));
+    private readonly SampleBotOptions _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
     private readonly object _sync = new();
     private BotCertificateRecord? _record;
-
-    public StoreBackedBotCertificateProvider(
-        IBotCertificateStore store,
-        IOptions<SampleBotOptions> options)
-    {
-        _store = store ?? throw new ArgumentNullException(nameof(store));
-        _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
-    }
 
     public string FingerprintSha256 => EnsureLoaded().FingerprintSha256;
 

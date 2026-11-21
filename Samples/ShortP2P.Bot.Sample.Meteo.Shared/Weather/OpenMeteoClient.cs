@@ -4,14 +4,9 @@ using System.Text.Json.Serialization;
 
 namespace ShortP2P.Bot.Sample.Meteo.Weather;
 
-public sealed class OpenMeteoClient : ICurrentWeatherSource, IPlaceGeocoder
+public sealed class OpenMeteoClient(HttpClient http) : ICurrentWeatherSource, IPlaceGeocoder
 {
-    private readonly HttpClient _http;
-
-    public OpenMeteoClient(HttpClient http)
-    {
-        _http = http ?? throw new ArgumentNullException(nameof(http));
-    }
+    private readonly HttpClient _http = http ?? throw new ArgumentNullException(nameof(http));
 
     public async Task<GeoHit?> SearchAsync(string name, string language, CancellationToken cancellationToken)
     {

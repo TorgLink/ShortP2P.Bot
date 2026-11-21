@@ -4,16 +4,11 @@ using Microsoft.Extensions.Logging;
 
 namespace ShortP2P.Bot.Sample.Storage;
 
-public sealed class SqliteBotCertificateStore : IBotCertificateStore
+public sealed class SqliteBotCertificateStore(SampleBotDatabase database, ILogger<SqliteBotCertificateStore> logger)
+    : IBotCertificateStore
 {
-    private readonly SampleBotDatabase _database;
-    private readonly ILogger<SqliteBotCertificateStore> _logger;
-
-    public SqliteBotCertificateStore(SampleBotDatabase database, ILogger<SqliteBotCertificateStore> logger)
-    {
-        _database = database ?? throw new ArgumentNullException(nameof(database));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly SampleBotDatabase _database = database ?? throw new ArgumentNullException(nameof(database));
+    private readonly ILogger<SqliteBotCertificateStore> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public BotCertificateRecord GetOrCreate(string subjectCommonName)
     {

@@ -11,24 +11,16 @@ namespace ShortP2P.Bot.Sample.Meteo.Media;
 /// Encrypts a weather PNG and voice file for the client, uploads ciphertext in 50 KB chunks,
 /// and returns transfer-offer messages the client uses to download those chunks.
 /// </summary>
-internal sealed class WeatherAttachmentSender
+internal sealed class WeatherAttachmentSender(
+    IBotMessenger messenger,
+    IMessengerServerRepository servers,
+    IMessengerServerApiClient api,
+    ILogger<WeatherAttachmentSender> logger)
 {
-    private readonly IBotMessenger _messenger;
-    private readonly IMessengerServerRepository _servers;
-    private readonly IMessengerServerApiClient _api;
-    private readonly ILogger<WeatherAttachmentSender> _logger;
-
-    public WeatherAttachmentSender(
-        IBotMessenger messenger,
-        IMessengerServerRepository servers,
-        IMessengerServerApiClient api,
-        ILogger<WeatherAttachmentSender> logger)
-    {
-        _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
-        _servers = servers ?? throw new ArgumentNullException(nameof(servers));
-        _api = api ?? throw new ArgumentNullException(nameof(api));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly IBotMessenger _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
+    private readonly IMessengerServerRepository _servers = servers ?? throw new ArgumentNullException(nameof(servers));
+    private readonly IMessengerServerApiClient _api = api ?? throw new ArgumentNullException(nameof(api));
+    private readonly ILogger<WeatherAttachmentSender> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public async Task<IReadOnlyList<BotClientMessageDto>> UploadAsync(
         string clientNetworkId,
