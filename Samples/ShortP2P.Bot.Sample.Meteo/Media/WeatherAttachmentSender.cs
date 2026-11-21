@@ -3,6 +3,7 @@ using ShortP2P.Bot.Dal;
 using ShortP2P.Bot.Http;
 using ShortP2P.Bot.Messaging;
 using ShortP2P.Bot.Sample.Echo;
+using ShortP2P.Bot.Wire;
 
 namespace ShortP2P.Bot.Sample.Meteo.Media;
 

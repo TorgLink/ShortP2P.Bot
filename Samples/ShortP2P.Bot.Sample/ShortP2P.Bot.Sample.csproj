@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.10" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
     <PackageReference Include="NLog" Version="5.3.4" />
     <PackageReference Include="NLog.Extensions.Logging" Version="5.3.11" />
@@ -27,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\ShortP2P.Bot\ShortP2P.Bot.csproj" />
+    <ProjectReference Include="..\ShortP2P.Bot.Sample.Shared\ShortP2P.Bot.Sample.Shared.csproj" />
   </ItemGroup>
 
 </Project>

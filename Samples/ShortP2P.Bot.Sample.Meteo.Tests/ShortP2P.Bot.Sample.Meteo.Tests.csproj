@@ -20,6 +20,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ShortP2P.Bot.Sample.Meteo\ShortP2P.Bot.Sample.Meteo.csproj" />
+    <ProjectReference Include="..\ShortP2P.Bot.Sample.Meteo.Shared\ShortP2P.Bot.Sample.Meteo.Shared.csproj" />
+    <ProjectReference Include="..\ShortP2P.Bot.Sample.Shared\ShortP2P.Bot.Sample.Shared.csproj" />
   </ItemGroup>
 
 </Project>
